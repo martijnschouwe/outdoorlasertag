@@ -2,12 +2,14 @@
 Lasertag game based on arduino and enhanced with a smartphone
 
 **Arduino parts**  
-- Arduino uno (probably with wifi) 
+- Arduino Uno
 - YX5300 sound module: https://github.com/cefaloide/ArduinoSerialMP3Player  
-- HC-05 bluetooth module  
+https://github.com/salvadorrueda/ArduinoSerialMP3Player
+- AT-09 4.0 Bluetooth module
+- Status led
 
 **Android**  
-An android phone with android version 4+, and bluetooth  
+An android phone with android version 4.3+, and bluetooth  
 The android phone is the controller of the game.
 It is able to set game time, set gun settings, assign players to a game, and after the game read the game data.
 
@@ -18,6 +20,3 @@ A game has a time window which can be set by the game controller.
 A player of a game can hit other players and gains points  
 A player of a game can get hit by other players and looses points  
 When a game ends, the game data can be shown in the game controller  
-
-
-
