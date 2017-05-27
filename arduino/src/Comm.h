@@ -3,8 +3,10 @@
 
 #include <Arduino.h>
 #include <RFM69.h>
+#include "SoftwareSerial.h"
 #include <IRremote.h>
 #include "Weapon.h"
+#include <ArduinoJson.h>
 
 class Mediator;
 
@@ -58,19 +60,19 @@ class Comm {
         const static byte PLAY_SOUND                       = 0x90;
 
         const static byte MESSAGE_PACKET_SIZE              = 14;
-
         RFM69 _radio;
         byte _nodeId;
         byte _networkId;
         IRsend _irsend;                                       // IR Send
         IRrecv _irrecv = IRrecv(IR_INPUT);                    // IR Receive
         decode_results _results;                              // Decoded IR
+
         typedef struct {
             byte command;
             byte data;
         } Payload;
         Mediator* _mediator;
-
+        Command* command;
     public:
         Comm(byte nodeId, byte networkId, Mediator &mediator);
         void update();
@@ -78,14 +80,17 @@ class Comm {
         void sendRadioCommand(Command command, byte data);
 
     private:
+        Command commandFromJson(ArduinoJson::JsonObject& jsonObject);
         void processRadioData(Payload payload);
         void commandMessage(byte in);
         void systemData(byte in);
         void processMessagePacket(byte command, byte data);
         void processShotPacket(unsigned long in);
         void receiveIR();
+        void receiveSerial();
         void receiveRadio();
         unsigned long createShotPacket(Damage damage);
+        SoftwareSerial* _ble;
 };
 
 #endif

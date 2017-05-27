@@ -1,18 +1,12 @@
 #include "Mediator.h"
-#include "Comm.h"
 #include "Game.h"
 #include "Player.h"
 #include "Weapon.h"
+#include "Comm.h"
 
 Mediator::Mediator() {
 
 }
-
-
-void Mediator::registerComm(Comm* comm) {
-    _comm = comm;
-}
-
 
 void Mediator::registerGame(Game* game) {
     _game = game;
@@ -20,6 +14,10 @@ void Mediator::registerGame(Game* game) {
 
 void Mediator::registerPlayer(Player* player) {
     _player = player;
+}
+
+void Mediator::registerComm(Comm* comm) {
+    _comm = comm;
 }
 
 void Mediator::registerWeapon(Weapon* weapon) {

@@ -1,10 +1,12 @@
 #include <IRremote.h>
 #include <SPI.h>
-#include "Comm.h"
+#include <ArduinoJson.h>
+#include <SoftwareSerial.h>
 #include "Game.h"
 #include "Player.h"
 #include "Timer.h"
 #include "Mediator.h"
+#include "Comm.h"
 
 #ifndef UNIT_TEST  // IMPORTANT LINE!
                                                 // Allow Debug Statements (Serial)
@@ -58,7 +60,6 @@ Game game;
 Weapon weapon(PRIMARY_PIN, RELOAD_PIN, Damage::DAMAGE1, Weapon::PRIMARY_RELOAD_DELAY, Cyclic::RPM_400, FireMode::FullAuto, SoundSet::MilSim, mediator);
 Player player(TeamId::Blue, PlayerId::GIZMO, game.friendlyFireEnabled(), mediator);
 Comm comm(NODEID, NETWORKID, mediator);
-
 /**
     Checks if the user has pressed the Primary, Secondary or Reload buttons
     and calls the corresponding method

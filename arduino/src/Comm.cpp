@@ -1,12 +1,13 @@
 #include "Comm.h"
 #include "Mediator.h"
-
-#define DEBUG                                        // Allow Debug Statements (Serial)
+#include <ArduinoJson.h>
 
 #define KEY    "sampleEncryptKey"                    // Must be the same on all devices and exactly 16 characters
 
 Comm::Comm(byte nodeId, byte networkId, Mediator &mediator) {
+
     _irrecv.enableIRIn();             // Start the IR Receiver
+    Serial.begin(9600);
     _irrecv.blink13(true);            // Blink the Onboard LED when we receive an IR signal
     _nodeId = nodeId;
     _networkId = networkId;
@@ -15,6 +16,7 @@ Comm::Comm(byte nodeId, byte networkId, Mediator &mediator) {
     _radio.promiscuous(false);
     _mediator = &mediator;
     _mediator->registerComm(this);
+    _ble = new SoftwareSerial(2, 3);
 }
 
 /**
@@ -36,6 +38,24 @@ void Comm::receiveIR() {
     }
 }
 
+/**
+    Receives ble json data and handles the message
+*/
+void Comm::receiveSerial() {
+  if (_ble -> available()) {
+    StaticJsonBuffer<200> jsonBuffer;
+    JsonObject& json = jsonBuffer.parseObject(_ble->readString());
+    //Payload _serialData = *(Payload*)json;
+    // Payload payload;
+    // payload.command = (byte)commandFromJson(json);
+    // if(json.success() && json.containsKey("command")) {
+    //   processMessagePacket(payload.command , payload.data);
+    // }
+    #ifdef DEBUG
+        Serial.println(int(commandFromJson(json)));
+    #endif
+  }
+}
 /**
     Receives Radio Packets and decodes the message
 */
@@ -61,8 +81,93 @@ void Comm::receiveRadio() {
 void Comm::update() {
     receiveIR();
     receiveRadio();
+    receiveSerial();
 }
 
+
+Command Comm::commandFromJson(JsonObject &jsonObject)
+{
+  // extract args from request
+  const char* command = jsonObject["command"];
+  const char* data = jsonObject["data"];
+
+  // convert to state
+  Command currentCommand;
+
+    if (strcmp(command, "AdminKill") == 0)
+    {
+      currentCommand = Command::AdminKill;
+    }
+    else if (strcmp(command, "PauseUnpause") == 0)
+    {
+      currentCommand = Command::PauseUnpause;
+    }
+    else if (strcmp(command, "StartGameDelay") == 0)
+    {
+      currentCommand = Command::StartGameDelay;
+    }
+    else if (strcmp(command, "RestoreDefaults") == 0)
+    {
+      currentCommand = Command::RestoreDefaults;
+    }
+    else if (strcmp(command, "Respawn") == 0)
+    {
+      currentCommand = Command::Respawn;
+    }
+    else if (strcmp(command, "NewGameImmediate") == 0)
+    {
+      currentCommand = Command::NewGameImmediate;
+    }
+    else if (strcmp(command, "FullAmmo") == 0)
+    {
+      currentCommand = Command::FullAmmo;
+    }
+    else if (strcmp(command, "EndGame") == 0)
+    {
+      currentCommand = Command::EndGame;
+    }
+    else if (strcmp(command, "ResetClock") == 0)
+    {
+      currentCommand = Command::ResetClock;
+    }
+    else if (strcmp(command, "InitializePlayer") == 0)
+    {
+      currentCommand = Command::InitializePlayer;
+    }
+    else if (strcmp(command, "ExplodePlayer") == 0)
+    {
+      currentCommand = Command::ExplodePlayer;
+    }
+    else if (strcmp(command, "NewGameReady") == 0)
+    {
+      currentCommand = Command::NewGameReady;
+    }
+    else if (strcmp(command, "FullHealth") == 0)
+    {
+      currentCommand = Command::FullHealth;
+    }
+    else if (strcmp(command, "FullArmor") == 0)
+    {
+      currentCommand = Command::FullArmor;
+    }
+    else if (strcmp(command, "ClearScores") == 0)
+    {
+      currentCommand = Command::ClearScores;
+    }
+    else if (strcmp(command, "TestSensors") == 0)
+    {
+      currentCommand = Command::TestSensors;
+    }
+    else if (strcmp(command, "StunPlayer") == 0)
+    {
+      currentCommand = Command::StunPlayer;
+    }
+    else if (strcmp(command, "DisarmPlayer") == 0)
+    {
+      currentCommand = Command::DisarmPlayer;
+    }
+    return currentCommand;
+  }
 /**
     Process Command Message
 */

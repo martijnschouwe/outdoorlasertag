@@ -20,3 +20,10 @@ A game has a time window which can be set by the game controller.
 A player of a game can hit other players and gains points  
 A player of a game can get hit by other players and looses points  
 When a game ends, the game data can be shown in the game controller  
+
+**Platform.io IDE **
+
+You can use this project with the platform.io IDE  
+http://platformio.org/platformio-ide
+
+You can run the unit test in the PROJECT_ROOT/arduino folder and start it by running `pio test`  
