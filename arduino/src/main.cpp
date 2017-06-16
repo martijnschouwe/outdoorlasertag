@@ -9,8 +9,9 @@
 #include "Comm.h"
 
 #ifndef UNIT_TEST  // IMPORTANT LINE!
-                                                // Allow Debug Statements (Serial)
+                              // Allow Debug Statements (Serial)
 #define DEBUG 1
+
 const byte IR_POWER_INDOOR                  = 0x00;
 const byte IR_POWER_OUTDOOR                 = 0x01;
 
@@ -36,8 +37,8 @@ const byte NETWORKID                        = 100;
 //const byte DISPLAY_CLK_PIN                  = 18;    // LED Display Clock Pin  [Teensy 3.2 - SDA0 I2C]
 //const byte DISPLAY_DAT_PIN                  = 19;    // LED Display Data Pin   [Teensy 3.2 - SCL0 I2C]
 const byte AUDIO_RX_PIN                     = 9;     // Audio Player RX [Teensy 3.2 - RX1]
-const byte AUDIO_TX_PIN                     = 10;     // Audio Player TX [Teensy 3.2 - TX1]
-const byte AUDIO_BUSY_PIN                   = 11;     // Audio Player Busy
+//const byte AUDIO_TX_PIN                     = 10;     // Audio Player TX [Teensy 3.2 - TX1]
+//const byte AUDIO_BUSY_PIN                   = 11;     // Audio Player Busy
 const byte PRIMARY_PIN                      = 0;     // Primary Trigger
 const byte RELOAD_PIN                       = 2;     // Reload Button
 const byte IR_OUTPUT                        = 5;     // IR Output (Fire Shot)  [Hardcoded to PIN 5 by IRremote library]
@@ -60,6 +61,7 @@ Game game;
 Weapon weapon(PRIMARY_PIN, RELOAD_PIN, Damage::DAMAGE1, Weapon::PRIMARY_RELOAD_DELAY, Cyclic::RPM_400, FireMode::FullAuto, SoundSet::MilSim, mediator);
 Player player(TeamId::Blue, PlayerId::GIZMO, game.friendlyFireEnabled(), mediator);
 Comm comm(NODEID, NETWORKID, mediator);
+
 /**
     Checks if the user has pressed the Primary, Secondary or Reload buttons
     and calls the corresponding method
@@ -80,15 +82,16 @@ void checkInput() {
     Setup Program
 */
 void setup() {
-#ifdef DEBUG
-    Serial.begin(SERIAL_BAUD_RATE);
-    Serial.println(F("setup"));
-#endif
+
+  Serial.begin(SERIAL_BAUD_RATE);
+  Serial.println(F("setup"));
+  // put your setup code here, to run once:
 
     // INPUT PINS
     // Enable the Interal Pull-Up Resistors
     pinMode(PRIMARY_PIN, INPUT_PULLUP);
     pinMode(RELOAD_PIN, INPUT_PULLUP);
+    digitalWrite(13, HIGH);
 
     pinMode(IR_INPUT, INPUT);
 

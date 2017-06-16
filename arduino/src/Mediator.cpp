@@ -5,7 +5,7 @@
 #include "Comm.h"
 
 Mediator::Mediator() {
-
+  Serial.println("Setup mediator");
 }
 
 void Mediator::registerGame(Game* game) {

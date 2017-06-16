@@ -73,14 +73,15 @@ class Comm {
         } Payload;
         Mediator* _mediator;
         Command* command;
+        SoftwareSerial *_ble;
     public:
         Comm(byte nodeId, byte networkId, Mediator &mediator);
         void update();
         void sendShot(Damage damage);
         void sendRadioCommand(Command command, byte data);
+        Command commandFromJson(ArduinoJson::JsonObject& jsonObject);
 
     private:
-        Command commandFromJson(ArduinoJson::JsonObject& jsonObject);
         void processRadioData(Payload payload);
         void commandMessage(byte in);
         void systemData(byte in);
@@ -89,8 +90,8 @@ class Comm {
         void receiveIR();
         void receiveSerial();
         void receiveRadio();
+        void blinkLed();
         unsigned long createShotPacket(Damage damage);
-        SoftwareSerial* _ble;
 };
 
 #endif

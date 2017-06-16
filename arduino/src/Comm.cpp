@@ -4,19 +4,21 @@
 
 #define KEY    "sampleEncryptKey"                    // Must be the same on all devices and exactly 16 characters
 
+
 Comm::Comm(byte nodeId, byte networkId, Mediator &mediator) {
 
     _irrecv.enableIRIn();             // Start the IR Receiver
-    Serial.begin(9600);
     _irrecv.blink13(true);            // Blink the Onboard LED when we receive an IR signal
     _nodeId = nodeId;
     _networkId = networkId;
-    _radio.initialize(RF69_433MHZ, _nodeId, _networkId);
-    _radio.encrypt(KEY);
-    _radio.promiscuous(false);
+    // _radio.initialize(RF69_433MHZ, _nodeId, _networkId);
+    // _radio.encrypt(KEY);
+    // _radio.promiscuous(false);
     _mediator = &mediator;
     _mediator->registerComm(this);
-    _ble = new SoftwareSerial(2, 3);
+    _ble = new SoftwareSerial(10,11);
+    _ble->begin(9600);
+
 }
 
 /**
@@ -42,16 +44,30 @@ void Comm::receiveIR() {
     Receives ble json data and handles the message
 */
 void Comm::receiveSerial() {
-  if (_ble -> available()) {
-    StaticJsonBuffer<200> jsonBuffer;
-    JsonObject& json = jsonBuffer.parseObject(_ble->readString());
+  // char reply[50];
+  // int i = 0;
+  // while (_ble->available()) {
+  //   reply[i] = _ble->read();
+  //   i += 1;
+  // }
+  // //end the string
+  // reply[i] = '\0';
+  // if(strlen(reply) > 0){
+  //   Serial.println(reply);
+  //   Serial.println("We have just read some data");
+  // }
+    if (_ble->available() > 0) {
+      StaticJsonBuffer<200> jsonBuffer;
+      JsonObject& json = jsonBuffer.parseObject(_ble->readString());
     //Payload _serialData = *(Payload*)json;
     // Payload payload;
     // payload.command = (byte)commandFromJson(json);
     // if(json.success() && json.containsKey("command")) {
     //   processMessagePacket(payload.command , payload.data);
     // }
+      blinkLed();
     #ifdef DEBUG
+        Serial.println("**** Received command");
         Serial.println(int(commandFromJson(json)));
     #endif
   }
@@ -80,7 +96,7 @@ void Comm::receiveRadio() {
 
 void Comm::update() {
     receiveIR();
-    receiveRadio();
+    //receiveRadio();
     receiveSerial();
 }
 
@@ -333,6 +349,13 @@ unsigned long Comm::createShotPacket(Damage damage) {
     Serial.print(F("createShotPacket(")); Serial.print(shotPacket, BIN); Serial.println(F(")"));
 #endif
     return shotPacket;
+}
+
+void Comm::blinkLed() {
+  digitalWrite(13, HIGH);
+  delay(2000);
+  digitalWrite(13, LOW);
+  delay(500);
 }
 
 void Comm::sendShot(Damage damage) {
