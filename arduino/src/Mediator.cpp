@@ -37,6 +37,7 @@ void Mediator::startGameWithDelay() {
 
 void Mediator::fire() {
     if (_player->isAlive() && !_player->isStunned() && _weapon->fire()) {
+         Serial.println("Firing round....");
         _comm->sendShot(_weapon->getDamageCode());
     }
 }

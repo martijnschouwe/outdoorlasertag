@@ -44,18 +44,6 @@ void Comm::receiveIR() {
     Receives ble json data and handles the message
 */
 void Comm::receiveSerial() {
-  // char reply[50];
-  // int i = 0;
-  // while (_ble->available()) {
-  //   reply[i] = _ble->read();
-  //   i += 1;
-  // }
-  // //end the string
-  // reply[i] = '\0';
-  // if(strlen(reply) > 0){
-  //   Serial.println(reply);
-  //   Serial.println("We have just read some data");
-  // }
     if (_ble->available() > 0) {
       StaticJsonBuffer<200> jsonBuffer;
       JsonObject& json = jsonBuffer.parseObject(_ble->readString());
@@ -65,6 +53,7 @@ void Comm::receiveSerial() {
     // if(json.success() && json.containsKey("command")) {
     //   processMessagePacket(payload.command , payload.data);
     // }
+      commandMessage(int(commandFromJson(json)));
       blinkLed();
     #ifdef DEBUG
         Serial.println("**** Received command");
@@ -182,6 +171,14 @@ Command Comm::commandFromJson(JsonObject &jsonObject)
     {
       currentCommand = Command::DisarmPlayer;
     }
+    else if (strcmp(command, "Fire") == 0)
+    {
+      currentCommand = Command::Fire;
+    }
+    else if (strcmp(command, "Reload") == 0)
+    {
+      currentCommand = Command::Reload;
+    }
     return currentCommand;
   }
 /**
@@ -245,6 +242,12 @@ void Comm::commandMessage(byte in) {
             break;
         case int(Command::DisarmPlayer):
             _mediator->disarm();
+            break;
+        case int(Command::Fire):
+            _mediator->fire();
+            break;
+        case int(Command::Reload):
+            _mediator->reload();
             break;
         default:
 #ifdef DEBUG

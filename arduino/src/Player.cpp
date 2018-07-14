@@ -349,4 +349,8 @@ String Player::getName() {
         default:
             return "";
     }
+
+    void Player::setPlayerName(String name){
+      _playerName = name;
+    }
 }

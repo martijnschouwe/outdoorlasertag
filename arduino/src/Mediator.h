@@ -46,7 +46,7 @@ class Mediator {
         void applyDamage(byte damageCode, byte otherTeam);
         PlayerId getPlayerId();
         TeamId getTeamId();
-
+        void setPlayerName(String name);
         bool isActive();
         bool isAlive();
         bool isEnd();

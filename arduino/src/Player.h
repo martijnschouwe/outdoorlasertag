@@ -88,6 +88,7 @@ class Player {
 
         TeamId _teamId;
         PlayerId _playerId;
+        String _playerName;
         int _health;
         int _armour;
         PlayerState _playerState;
@@ -105,7 +106,9 @@ class Player {
         void explode();
         void stun();
         String getName();
+        void setPlayerName(String name);
         String getTeam();
+        String getStringName();
 
         void addHealth(byte health);
         void fullHealth();

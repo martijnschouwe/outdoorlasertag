@@ -29,6 +29,9 @@ enum class Command {
     TestSensors      = 0x15,
     StunPlayer       = 0x16,
     DisarmPlayer     = 0x17,
+    SetPlayerName    = 0x18,
+    Fire             = 0x1A,
+    Reload           = 0x1B,
 };
 
 enum class SystemData {
