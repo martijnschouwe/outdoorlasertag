@@ -15,6 +15,7 @@ angular.module('starter', ['ionic'])
       ble.isEnabled(
         function(){
           // Bluetooth is enabled
+          console.info("Bluetooth enabled on device...");
         },
         function(){
           // Bluetooth not yet enabled so we try to enable it
@@ -52,7 +53,11 @@ angular.module('starter', ['ionic'])
   .state('device', {
     url: '/device/:id',
     templateUrl: 'templates/device.html'
-  });
+  })
 
+  .state('splash', {
+    url: '/splash',
+    templateUrl: 'templates/splashscreen.html'
+  })
   $urlRouterProvider.otherwise('/home');
 });

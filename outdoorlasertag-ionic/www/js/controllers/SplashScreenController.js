@@ -1,12 +1,13 @@
 (function() {
   'use strict';
   angular
-    .module('ngCordovaEG')
-    .controller('splashScreenController', splashScreen);
-  function splashScreen($cordovaSplashscreen){
-    var splashScreen = this;
-    splashScreen.showSplashScreen = function(){
+    .module('starter')
+    .controller('SplashScreenController',['$cordovaSplashscreen', SplashScreenController] );
+
+  function SplashScreenController($cordovaSplashscreen){
+    console.log("Show splash");
+
       $cordovaSplashscreen.show();
-    };
+      $cordovaSplashscreen.hide();
   }
 })();

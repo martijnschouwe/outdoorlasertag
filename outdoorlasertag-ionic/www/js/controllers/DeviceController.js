@@ -14,15 +14,15 @@
       name: ''
     }
 
-    $scope.name = '';
+    $scope.name = 'Test';
 
-    $scope.selectedCommand = '';
+    $scope.selectedCommand = 'AdminKill';
 
     $scope.init = function(){
       $scope.device = DeviceFactory.getDevice($stateParams.id);
     }
 
-    $scope.commands = ['AdminKill','FullAmmo', 'SetName'];
+    $scope.commands = ['AdminKill','FullAmmo', 'SetName','GetPlayerName'];
 
     $scope.sendCommand = function(){
       console.log('The selected command is : ',$scope.selectedCommand);
@@ -37,12 +37,23 @@
     };
 
     $scope.setNameOnBLEDevice = function(){
-      console.info('Set name of tagger to: ' + $scope.name);
+      alert('Set name of tagger to: ' + $scope.name);
       ble.write(
         $stateParams.id,
         service_id,
         characteristic_id,
-        btoa("AT+NAME"+$scope.name),
+        btoa("AT+VERSION"),
+        bleSuccess,
+        bleError
+      );
+    }
+
+    $scope.getPlayerName = function(){
+      ble.read(
+        $stateParams.id,
+        service_id,
+        characteristic_id,
+        btoa("AT+VERSION"),
         bleSuccess,
         bleError
       );
@@ -56,15 +67,17 @@
     function bleSuccess(response){
       if(response == 'OK'){
         alert("Command send to ble device");
-        ble.disconnect($stateParams.id);
+        console.log(response);
+        alert(response);
+        //ble.disconnect($stateParams.id);
       }else{
-        console.log("We did not get an OK from the ble device");
+        alert.log("We did not get an OK from the ble device");
 
       }
     }
 
     function bleError(err){
-      console.log(err);
+      alert.log(err);
       alert("Error occured while trying to send te command");
     }
 

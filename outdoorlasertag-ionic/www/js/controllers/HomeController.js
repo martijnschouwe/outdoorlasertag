@@ -4,14 +4,15 @@
 
   function HomeController($scope, $state, DeviceFactory){
 
-    $scope.devices = [];
+    console.log("Starting home controller");
+    $scope.devices = DeviceFactory.getDevices();
 
     $scope.scan = function(){
-
       DeviceFactory.reset();
       ble.startScan(
         [],
         function(device){
+          console.log("Start scanning devices...");
           console.log(device);
           if(device.name){
             DeviceFactory.addDevice({ 'id': device.id, 'name': device.name });
@@ -24,7 +25,7 @@
 
       setTimeout(
           ble.stopScan,
-          1500,
+          5000,
           function(){
             $scope.$apply(function(){
               $scope.devices = DeviceFactory.getDevices();
@@ -47,8 +48,7 @@
           alert('Something went wrong while trying to connect. Please try again');
         }
       );
-    }
-
+    };
   }
 
 })();

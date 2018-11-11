@@ -13,9 +13,8 @@
       <select [(ngModel)]="selectedCommand">
         <option ng-repeat="command in commands" ng-value="command">{{command}}</option>
       </select>
-      {{name}}
       <input type="text" [(ngModel)]="name" placeholder="Player Name" />
-      <button class="item button button-positive button-full" ng-click="setNameOnBLEDevice()">
+      <button class="item button button-positive button-full" ng-click="sendCommand()">
       Send Command
       </button>
     </div>

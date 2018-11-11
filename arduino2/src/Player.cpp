@@ -1,11 +1,14 @@
+#include <StandardCplusplus.h>
+#include <vector>
 #include "Timer.h"
 #include "Player.h"
+#include "Manager.h"
 #define DEBUG                                        // Allow Debug Statements (Serial)
 
 /**
     Initializes the player
 */
-Player::Player(TeamId teamId, PlayerId playerId, bool friendlyFire) {
+Player::Player(TeamId teamId, PlayerId playerId, bool friendlyFire, Manager &manager) {
     _teamId              = teamId;
     _playerId            = playerId;
     _teamId              = teamId;
@@ -16,67 +19,18 @@ Player::Player(TeamId teamId, PlayerId playerId, bool friendlyFire) {
     _friendlyFireEnabled = friendlyFire;
     _playerState         = PlayerState::Alive;
     _kills               = 0;
+    _manager             = &manager;
+    _manager->registerPlayer(this);
 }
 
 /**
     Applies damage to players of the same team if FRIENDLY_FIRE is enabled
     otherwise the damage is ignored
 */
-void Player::applyDamage(byte damageCode, byte otherTeam) {
-    byte damage = 0;
-    switch (damageCode) {
-        case int(Damage::DAMAGE1):
-            damage = 1;
-            break;
-        case int(Damage::DAMAGE2):
-            damage = 2;
-            break;
-        case int(Damage::DAMAGE4):
-            damage = 4;
-            break;
-        case int(Damage::DAMAGE5):
-            damage = 5;
-            break;
-        case int(Damage::DAMAGE7):
-            damage = 7;
-            break;
-        case int(Damage::DAMAGE10):
-            damage = 10;
-            break;
-        case int(Damage::DAMAGE15):
-            damage = 15;
-            break;
-        case int(Damage::DAMAGE17):
-            damage = 17;
-            break;
-        case int(Damage::DAMAGE20):
-            damage = 20;
-            break;
-        case int(Damage::DAMAGE25):
-            damage = 25;
-            break;
-        case int(Damage::DAMAGE30):
-            damage = 30;
-            break;
-        case int(Damage::DAMAGE35):
-            damage = 35;
-            break;
-        case int(Damage::DAMAGE40):
-            damage = 40;
-            break;
-        case int(Damage::DAMAGE50):
-            damage = 50;
-            break;
-        case int(Damage::DAMAGE75):
-            damage = 75;
-            break;
-        case int(Damage::DAMAGE100):
-            damage = 100;
-            break;
-    }
+void Player::applyDamage(byte damageCode, byte otherTeam, byte playerId) {
 
 #ifdef DEBUG
-    Serial.print(F("applyDamage(")); Serial.print(damage, DEC); Serial.print(F(", ")); Serial.print(otherTeam, DEC); Serial.println(F(")"));
+    Serial.print(F("applyDamage(")); Serial.print(damageCode, DEC); Serial.print(F(", ")); Serial.print(otherTeam, DEC); Serial.println(F(")"));
 #endif
     // Always apply damage if you not from the same team otherwise check if
     // Friendly Fire is enabled first
@@ -84,7 +38,9 @@ void Player::applyDamage(byte damageCode, byte otherTeam) {
 #ifdef DEBUG
         Serial.print(F("Health: ")); Serial.println(_health, DEC);
 #endif
-        _health -= damage;
+        _health -= damageCode;
+        Hit hit = {static_cast<TeamId>(otherTeam), static_cast<PlayerId>(playerId)};
+        hits.push_back(hit);
         if (_health <= 0) {
             kill();
         }
@@ -171,7 +127,9 @@ void Player::respawn() {
 void Player::kill() {
     _health = 0;
     _playerState = PlayerState::Dead;
+    #ifdef DEBUG
     Serial.println(F("Your Dead!!"));
+    #endif
 }
 
 void Player::explode() {
@@ -186,7 +144,7 @@ void Player::stun() {
 #ifdef DEBUG
     Serial.println(F("stunPlayer()"));
 #endif
-    _stunned = true;
+    //_stunned = true;
     _stunnedTimer.refresh();
 }
 
@@ -351,13 +309,127 @@ String Player::getName() {
 }
 
 String Player::getNameById(byte id) {
-    switch (id) {
-        case 0x00:
+    switch (static_cast<PlayerId>(id)) {
+        case PlayerId::JESSE:
             return "JESSE";
-        case 0x01:
+        case PlayerId::JAIDEN:
             return "JAIDEN";
-        case 0x02:
+        case PlayerId::SENN:
             return "SENN";
+        case PlayerId::SARGE:
+            return "SARGE";
+        case PlayerId::ANGEL:
+            return "ANGEL";
+        case PlayerId::COSMO:
+            return "COSMO";
+        case PlayerId::GECKO:
+            return "GECKO";
+        case PlayerId::BLAZE:
+            return "BLAZE";
+        case PlayerId::CAMO:
+            return "CAMO";
+        case PlayerId::FURY:
+            return "FURY";
+        case PlayerId::FLASH:
+            return "FLASH";
+        case PlayerId::GIZMO:
+            return "GIZMO";
+        case PlayerId::HOMER:
+            return "HOME";
+        case PlayerId::STORM:
+            return "STORM";
+        case PlayerId::HABIT:
+            return "HABIT";
+        case PlayerId::CLICK:
+            return "CLICK";
+        case PlayerId::RONIN:
+            return "RONIN";
+        case PlayerId::LUCKY:
+            return "LUCKY";
+        case PlayerId::RADAR:
+            return "RADAR";
+        case PlayerId::BLADE:
+            return "BLADE";
+        case PlayerId::NINJA:
+            return "NINJA";
+        case PlayerId::MAGIC:
+            return "MAGIC";
+        case PlayerId::GONZO:
+            return "GONZO";
+        case PlayerId::COBRA:
+            return "COBRA";
+        case PlayerId::PAPPY:
+            return "PAPPY";
+        case PlayerId::RAMBO:
+            return "RAMBO";
+        case PlayerId::SNAKE:
+            return "SNAKE";
+        case PlayerId::AUDIE:
+            return "AUDIE";
+        case PlayerId::STING:
+            return "STING";
+        case PlayerId::ZEENA:
+            return "ZEENA";
+        case PlayerId::BUGSY:
+            return "BUGSY";
+        case PlayerId::VIPER:
+            return "VIPER";
+        case PlayerId::JEWEL:
+            return "JEWEL";
+        case PlayerId::GENIE:
+            return "GENIE";
+        case PlayerId::LOGAN:
+            return "LOGAN";
+        case PlayerId::RAZOR:
+            return "RAZOR";
+        case PlayerId::SLICK:
+            return "SLICK";
+        case PlayerId::VENOM:
+            return "VENOM";
+        case PlayerId::ROCKY:
+            return "ROCKY";
+        case PlayerId::SABER:
+            return "SABER";
+        case PlayerId::CRUSH:
+            return "CRUSH";
+        case PlayerId::TITAN:
+            return "TITAN";
+        case PlayerId::ORBIT:
+            return "ORBIT";
+        case PlayerId::VIXEN:
+            return "VIXEN";
+        case PlayerId::TANK:
+            return "TANK";
+        case PlayerId::ROGUE:
+            return "ROGUE";
+        case PlayerId::SHEIK:
+            return "SHEIK";
+        case PlayerId::GIZMO2:
+            return "GIZMO2";
+        case PlayerId::SIREN:
+            return "SIREN";
+        case PlayerId::DOZER:
+            return "DOZER";
+        case PlayerId::MICRO:
+            return "MICRO";
+        case PlayerId::LGT_MG:
+            return "LGTMG";
+        case PlayerId::HVY_MG:
+            return "HVYMG";
+        case PlayerId::ZOOKA:
+            return "ZOOKA";
+        case PlayerId::ROCKT:
+            return "ROCKT";
+        case PlayerId::GRNDE:
+            return "GRNDE";
+        case PlayerId::CLYMR:
+            return "CLYMR";
+        case PlayerId::MINE:
+            return "MINE";
+        case PlayerId::BOMB:
+            return "BOMB";
+        case PlayerId::NUKE:
+            return "NUKE";
         default:
             return "";
     }
@@ -369,4 +441,8 @@ byte Player::getKills() {
 
 void Player::incrementKills() {
     _kills++;
+}
+
+vector<Hit> Player::getHits(){
+    return hits;
 }

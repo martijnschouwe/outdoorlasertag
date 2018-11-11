@@ -1,4 +1,4 @@
-<ion-view title="Outdoorlasertag Commander" ng-controller="HomeController as home_ctrl">
+<ion-view title="Outdoorlasertag Commander" ng-controller="HomeController">
   <header class="bar bar-header bar-stable">
     <h1 class="title">Outdoorlasertag Commander</h1>
   </header>
@@ -8,7 +8,7 @@
       Scan
     </button>
 
-    <div class="card" ng-if="devices.length == 0">
+    <div class="card" ng-if="devices.length != 0">
       <div class="item item-divider">
        Players Found
       </div>
@@ -20,12 +20,12 @@
             connect
             </button>
           </li>
-          <li class="item item-button-right" ng-repeat="device in devices">
+          <!-- <li class="item item-button-right" ng-repeat="device in devices">
             Player1
             <button class="button button-balanced" ng-click="connect(device.id)">
             connect
             </button>
-          </li>
+          </li> -->
         </ul>
       </div>
     </div>
